@@ -1,8 +1,8 @@
 import Counter from "./components/counter";
 
-function App() {
+function App(props) {
 
-  return <Counter />
+  return <Counter store={props.store} />
   
 }
 
