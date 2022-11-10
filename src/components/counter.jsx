@@ -1,5 +1,6 @@
 import { useRef } from "react"
 const Counter = (props) => {
+  console.log(props);
   const selectValue = useRef()
   // 加
   const increment = () => {
@@ -26,7 +27,7 @@ const Counter = (props) => {
   }
   return (
     <div className="App">
-      <div>count：100</div>
+      <div>count：{props.count}</div>
       <select ref={selectValue}>
         <option value="1">1</option>
         <option value="2">2</option>

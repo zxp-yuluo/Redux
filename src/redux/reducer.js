@@ -9,7 +9,7 @@
 import {INCREMENT, DCREMENT} from './action_types'
 
 // 初始化一个state
-let initState = 1000   
+let initState = 900   
 
 const reducer = (preState = initState, action) => {
   const { type, data } = action

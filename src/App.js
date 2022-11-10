@@ -1,9 +1,7 @@
-import Counter from "./components/counter";
+import CounterContainer from "./containers/counter_containers";
 
-function App(props) {
-
-  return <Counter store={props.store} />
-  
+function App() {
+  return <CounterContainer />
 }
 
 export default App;
