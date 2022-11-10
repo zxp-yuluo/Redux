@@ -1,4 +1,5 @@
 import { useRef } from "react"
+import { incrementAction, decrementAction } from "../redux/action_creators"
 const Counter = (props) => {
   const selectValue = useRef()
   const { store } = props
@@ -7,39 +8,27 @@ const Counter = (props) => {
   const increment = () => {
     const value = selectValue.current.value * 1
     // 分发action
-    store.dispatch({
-      type: 'increment',
-      data: value
-    })
+    store.dispatch(incrementAction(value))
   }
 
   // 减
   const decrement = () => {
     const value = selectValue.current.value * 1
-    store.dispatch({
-      type: '减',
-      data: value
-    })
+    store.dispatch(decrementAction(value))
   }
 
   // 如果是奇数就加
   const oddIncrement = () => {
     const value = selectValue.current.value * 1
     if (count % 2 === 0) return
-    store.dispatch({
-      type: 'increment',
-      data: value
-    })
+    store.dispatch(incrementAction(value))
   }
 
   // 两秒后加
   const asyncIncrement = () => {
     const value = selectValue.current.value * 1
     setTimeout(() => {
-      store.dispatch({
-        type: 'increment',
-        data: value
-      })
+      store.dispatch(incrementAction(value))
     }, 2000)
   }
   return (

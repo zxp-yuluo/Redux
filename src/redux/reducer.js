@@ -10,7 +10,6 @@ let initState = 1000
 
 const reducer = (preState = initState, action) => {
   const { type, data } = action
-  console.log(type, data);
   let newState
   switch (type) {
     case 'increment':
