@@ -9,3 +9,10 @@ root.render(
     <App store={store} />
   </React.StrictMode>
 );
+store.subscribe(() => {
+  root.render(
+    <React.StrictMode>
+      <App store={store} />
+    </React.StrictMode>
+  );
+})

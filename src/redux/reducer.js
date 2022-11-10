@@ -5,16 +5,17 @@
 
 // reducer调用1+n，初始化的时候，用户分发action的时候
 
-
-let initState = 1000   // 初始化一个state
+// 初始化一个state
+let initState = 1000   
 
 const reducer = (preState = initState, action) => {
   const { type, data } = action
+  console.log(type, data);
   let newState
   switch (type) {
     case 'increment':
       return newState = preState + data
-    case 'decrement':
+    case '减':
       return newState = preState - data
     default:
       return preState

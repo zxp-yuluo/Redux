@@ -40,7 +40,7 @@ const reducer = (preState = initState, action) => {
   switch (type) {
     case 'increment':
       return newState = preState + data
-    case 'decrement':
+    case '减':
       return newState = preState - data
     default:
       return preState
@@ -49,11 +49,11 @@ const reducer = (preState = initState, action) => {
 export default reducer
 ```
 
-## 组件中使用
+## 组件中使用（不建议直接在组件中引用,欲知原因，且往下看）
 
 ```jsx
 import { useRef } from "react"
-// 引入store
+// 引入store  
 import store from "../redux/store"
 const Counter = () => {
   const selectValue = useRef()
@@ -89,6 +89,179 @@ const Counter = () => {
           
       {<!--调用getState()方法，这里的值为1000。（reducer中设置的initState）-->}
        
+      <div>count：{store.getState()}</div>
+      <select ref={selectValue}>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+      </select>
+      <button onClick={increment}>+</button>
+      <button onClick={decrement}>-</button>
+      <button onClick={oddIncrement}>奇数+</button>
+      <button onClick={asyncIncrement}>异步+</button>
+    </div>
+  )
+}
+
+export default Counter
+```
+
+## 从index.js中引用（通过props传递）
+
+```jsx
+// index.js
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './App';
+import store from './redux/store';
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(
+  <React.StrictMode>
+    <App store={store} />
+  </React.StrictMode>
+);
+```
+
+```jsx
+// app.js
+import Counter from "./components/counter";
+
+function App(props) {
+
+  return <Counter store={props.store} />
+  
+}
+
+export default App;
+```
+
+```jsx
+// counter.js
+import { useRef } from "react"
+const Counter = (props) => {
+  const selectValue = useRef()
+
+  // 加
+  const increment = () => {
+    const value = selectValue.current.value * 1
+    
+  }
+
+  // 减
+  const decrement = () => {
+    const value = selectValue.current.value * 1
+    
+  }
+
+  // 如果是奇数就加
+  const oddIncrement = () => {
+    const value = selectValue.current.value * 1
+    // if(count%2 === 0) return
+    
+  }
+
+  // 两秒后加
+  const asyncIncrement = () => {
+    const value = selectValue.current.value * 1
+    setTimeout(() => {
+      
+    }, 2000)
+  }
+  return (
+    <div className="App">
+      <div>count：{props.store.getState()}</div>
+      <select ref={selectValue}>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+      </select>
+      <button onClick={increment}>+</button>
+      <button onClick={decrement}>-</button>
+      <button onClick={oddIncrement}>奇数+</button>
+      <button onClick={asyncIncrement}>异步+</button>
+    </div>
+  )
+}
+
+export default Counter
+```
+
+## 交互(原因)
+
+```jsx
+// index.js
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './App';
+import store from './redux/store';
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(
+  <React.StrictMode>
+    <App store={store} />
+  </React.StrictMode>
+);
+// 不加这个，state变化，组件不重新渲染
+// 检测redux中的数据变化，重新渲染组件
+store.subscribe(() => {
+  root.render(
+    <React.StrictMode>
+      <App store={store} />
+    </React.StrictMode>
+  );
+})
+
+```
+
+```jsx
+// counter.js
+import { useRef } from "react"
+const Counter = (props) => {
+  const selectValue = useRef()
+  const { store } = props
+
+  // 加
+  const increment = () => {
+    const value = selectValue.current.value * 1
+    // 分发action
+    store.dispatch({
+      type: 'increment',
+      data: value
+    })
+  }
+
+  // 减
+  const decrement = () => {
+    const value = selectValue.current.value * 1
+    store.dispatch({
+      type: '减',
+      data: value
+    })
+  }
+
+  // 如果是奇数就加
+  const oddIncrement = () => {
+    const value = selectValue.current.value * 1
+    if (store.getState() % 2 === 0) return
+    store.dispatch({
+      type: 'increment',
+      data: value
+    })
+  }
+
+  // 两秒后加
+  const asyncIncrement = () => {
+    const value = selectValue.current.value * 1
+    setTimeout(() => {
+      store.dispatch({
+        type: 'increment',
+        data: value
+      })
+    }, 2000)
+  }
+  return (
+    <div className="App">
       <div>count：{store.getState()}</div>
       <select ref={selectValue}>
         <option value="1">1</option>
