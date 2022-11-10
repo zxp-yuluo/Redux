@@ -5,7 +5,7 @@
  我们建议使用@reduxjs/toolkit包的configureStore方法，它取代了createStore。
 ```
 
-![](src\img\redux.png)
+![](src/img/redux.png)
 
 ## store.js
 
