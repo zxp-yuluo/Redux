@@ -5,6 +5,9 @@
 
 // reducer调用1+n，初始化的时候，用户分发action的时候
 
+// 引入action对象中的类型（type）
+import {INCREMENT, DCREMENT} from './action_types'
+
 // 初始化一个state
 let initState = 1000   
 
@@ -12,9 +15,9 @@ const reducer = (preState = initState, action) => {
   const { type, data } = action
   let newState
   switch (type) {
-    case 'increment':
+    case INCREMENT:
       return newState = preState + data
-    case '减':
+    case DCREMENT:
       return newState = preState - data
     default:
       return preState
