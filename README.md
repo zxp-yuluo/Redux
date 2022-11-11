@@ -538,3 +538,91 @@ const Counter = (props) => {
 export default Counter
 ```
 
+## 交互
+
+### counter_containers.jsx
+
+```jsx
+// counter的容器组件，起到一个连接作用
+import counter from "../components/counter";
+import { connect } from "react-redux";
+import {incrementAction,decrementAction} from '../redux/action_creators'
+
+// 从redux中把state取出来，以props的形式给UI组件
+const mapStateToProps = (state) => {
+  // 该方法的返回值，会作为props参数传递。相当于<Counter count={state} />
+  return {
+    count: state
+  }
+}
+// 从redux中把dispatch取出来，以props的形式给UI组件
+const mapMethodToProps = (dispatch) => {
+
+  return {
+    // 该方法的返回值，会作为props参数传递。相当于<Counter increment={操作方法dispatch} />
+    increment: (data) => {
+      return dispatch(incrementAction(data))
+    },
+    // 该方法的返回值，会作为props参数传递。相当于<Counter decrement={操作方法dispatch} />
+    decrement: (data) => {
+      return dispatch(decrementAction(data))
+    }
+  }
+}
+
+export default connect(mapStateToProps,mapMethodToProps)(counter)
+```
+
+### counter.js
+
+```jsx
+import { useRef } from "react"
+const Counter = (props) => {
+  const selectValue = useRef()
+  // 解构赋值，因为有方法名为increment和decrement，我们起个别名incrementAction和decrementAction
+  const {count,increment: incrementAction,decrement: decrementAction} = props
+  // 加
+  const increment = () => {
+    const value = selectValue.current.value * 1
+    incrementAction(value)
+  }
+
+  // 减
+  const decrement = () => {
+    const value = selectValue.current.value * 1
+    decrementAction(value)
+  }
+
+  // 如果是奇数就加
+  const oddIncrement = () => {
+    const value = selectValue.current.value * 1
+    if (count % 2 === 0) return
+    incrementAction(value)
+  }
+
+  // 两秒后加
+  const asyncIncrement = () => {
+    const value = selectValue.current.value * 1
+    setTimeout(() => {
+      incrementAction(value)
+    }, 2000)
+  }
+  return (
+    <div className="App">
+      <div>count：{count}</div>
+      <select ref={selectValue}>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+      </select>
+      <button onClick={increment}>+</button>
+      <button onClick={decrement}>-</button>
+      <button onClick={oddIncrement}>奇数+</button>
+      <button onClick={asyncIncrement}>异步+</button>
+    </div>
+  )
+}
+
+export default Counter
+```
+
