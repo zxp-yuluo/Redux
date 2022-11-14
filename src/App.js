@@ -1,8 +1,9 @@
-
+import Toolkit from "./components/toolkit";
+import './store/index'
 function App() {
   return (
     <div className="App">
-      App
+      <Toolkit></Toolkit>
     </div>
   );
 }

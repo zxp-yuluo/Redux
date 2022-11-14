@@ -1,70 +1,144 @@
-# Getting Started with Create React App
+# redux
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+![](src/img/redux.png)
 
-## Available Scripts
+ ## **Redux Toolkit**
 
-In the project directory, you can run:
+```powershell
+npm install react-redux @reduxjs/toolkit
 
-### `npm start`
+yarn add react-redux @reduxjs/toolkit
+```
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## 使用
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### store/slices/stuSlice.js
 
-### `npm test`
+```js
+// store/slices/stuSlice
+import { createSlice } from '@reduxjs/toolkit'
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+const stuSlice = createSlice({
+  initialState: {
+    name: '焰灵姬',
+    age: 18,
+    sex: 'nv'
+  },            // 初始化数据
+  name: 'xp',  // 用来自动生成action中的type
+  reducers: {   // 指定state的各种操作
+    setName(state,action){
+      // 可以通过不同的方法，来指定对state的不同操作
+      // state是一个代理对象，并不是直接把原来的state返回了，可以直接修改
+      state.name = "赤炼"  // 不需要复制后再去修改
+    },
+    setAge(state,action) {
+      state.age = 19
+    }
+  }
+})
 
-### `npm run build`
+console.log(stuSlice.actions);
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+// actions中存储的是slice自动生成的action创建器(函数)， 调用后会自动创建action对象
+// action对象结构是 {type：name/函数名，payload：函数的参数}
+export const { setName, setAge} = stuSlice.actions
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+console.log(setName('payload接收'));
+console.log(setAge({name: 'Tom',age: 16}));
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+![](src/img/01.png)
 
-### `npm run eject`
+### store/slices/counterSlice.js
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+```js
+// store/slices/counterSlice.js
+import { createSlice } from '@reduxjs/toolkit'
+const counterSlice = createSlice({
+  name: 'count',
+  initialState: {
+    value: 0,
+    title: "redux toolkit pre"
+  },
+  reducers: {
+    increment(state,action) {
+      state.value ++
+    },
+    decrement(state,action) {
+      state.value -= 1
+    }
+  }
+})
+// 导出加减的方法
+export const { increment, decrement } = counterSlice.actions;
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+// 默认导出
+export default counterSlice;
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### store/index.js
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+```js
+import { configureStore } from '@reduxjs/toolkit'
+import stuSlice from './slices/stuSlice'
+import counterSlice from './slices/counterSlice'
 
-## Learn More
+// 创建store 
+const store = configureStore({
+  reducer: {
+    student: stuSlice.reducer,
+    count: counterSlice.reducer
+  }
+})
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+export default store
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### index.js
 
-### Code Splitting
+```JSX
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './App';
+import { Provider } from 'react-redux';
+import store from './store/index'
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(
+  <React.StrictMode>
+    <Provider store={store}>
+      <App />
+    </Provider>
+  </React.StrictMode>
+);
 
-### Analyzing the Bundle Size
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+### components/toolkit.jsx
 
-### Making a Progressive Web App
+```jsx
+import {useSelector,useDispatch} from 'react-redux'
+import {increment, decrement} from '../store/slices/counterSlice.js'
+const Toolkit = () => {
+  // useSelector()用来加载state中的数据
+  const {value} = useSelector(state => state.count)
+  // 用来分发state操作命令
+  const dispatch = useDispatch()
+  const incrementClick = () => {
+    dispatch(increment())
+  }
+  const decrementClick = () => {
+    dispatch(decrement())
+  }
+  return (
+    <div>
+      <button onClick={incrementClick}>增加</button>
+      <span style={{margin: '0 10px'}}>{value}</span>
+      <button onClick={decrementClick}>减少</button>
+    </div>
+  )
+}
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+export default Toolkit
+```
 
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
